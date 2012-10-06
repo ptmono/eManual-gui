@@ -1,0 +1,4 @@
+moc_*.cc
+*_flymake.*
+ui_*.h
+

@@ -1,0 +1,4 @@
+build
+*moc_*.cc
+src/ui_*.h
+.sconsign.dblite

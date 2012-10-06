@@ -1,0 +1,5 @@
+*.sqlite
+.sconsign.dblite
+moc_*.cc
+*.o
+ui_*.h

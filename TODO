@@ -1,0 +1,4 @@
+ - 1204240025 It is possible same name for group and element. Avoid that.
+ - 1205260520 Determine and realize that.
+ - 1210070529 Execute file require fullcalendar. Consider installation process.
+ - 1210070530 Fix the location of database

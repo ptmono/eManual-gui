@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.print.css' media='print' />
+<link rel='stylesheet' type='text/css' href='popup.css' />
+<script type='text/javascript' src='../jquery/jquery-1.7.1.min.js'></script>
+<script type='text/javascript' src='../jquery/jquery-ui-1.8.17.custom.min.js'></script>
+<script type='text/javascript' src='../fullcalendar/fullcalendar.min.js'></script>
+<script type='text/javascript'>
+
+/////////
+/// popup
+
+// 0 means disabled; 1 means enabled;
+var popupStatus = 0;
+
+var t;
+function timedCount()
+{
+    t = setTimeout("timeCount()", 1000);
+}
+
+var title = "tttt";
+
+function loadPopup(){
+    if(popupStatus == 0){
+	$("#createEvent_dialog_background").css({
+	    "opacity": "0.7"
+	});
+	$("#createEvent_dialog_background").fadeIn("fast");
+	$("#createEvent_dialog").fadeIn("fast");
+	popupStatus = 1;
+    }
+}
+
+function disablePopup(){
+    if(popupStatus == 1){
+	$("#createEvent_dialog_background").fadeOut("slow");
+	$("#createEvent_dialog").fadeOut("slow");
+	popupStatus = 0;
+    }
+}
+
+function centerPopup(){
+    var windowWidth = document.documentElement.clientWidth;
+    var windowHeight = document.documentElement.clientHeight;
+    var popupHeight = $("#createEvent_dialog").height();
+    var popupWidth = $("#createEvent_dialog").width();
+    //centering
+    $("#createEvent_dialog").css({
+	"position": "absolute",
+	"top": windowHeight/2-popupHeight/2,
+	"left": windowWidth/2-popupWidth/2
+    });
+}
+
+//$(function(){
+    // $("#createEvent_dialog").dialog({
+    // 	autoOpen: false,
+    // 	height: 300,
+    // 	width:350,
+    // 	modal: true,
+    // 	buttons: {
+    // 	    "Create an account": function() {
+    // 		alert("fdskf");
+    // 	    },
+    // 	    Cancel: function() {
+    // 		$(this).dialog("close");
+    // 	    }
+    // 	},
+    // 	close: function() {
+    // 	}
+    // });
+//}
+
+
+var m_start;
+var m_end;
+var m_allDay;
+var m_title;
+
+function createEvent(obj, start, end, allDay)
+{
+
+    obj.fullCalendar('renderEvent',
+		     {
+			 title: "kfdslkfsdkf",
+			 start: start,
+			 end: end,
+			 allDay: allDay
+		     },
+		     true
+		    );
+    obj.fullCalendar('unselect');
+}
+
+
+$(document).ready(function() {
+
+    //createEvent();
+    // $(function() {
+    // 	$("#createEvent_dialog").dialog({
+    // 	    autoOpen: false,
+    // 	    height: 300,
+    // 	    width: 350,
+    // 	    modal: true
+    // 	});
+    // });
+
+    
+    // $(function() {
+    // 	$( "input:submit").button();
+    // });
+
+    var name = $("#createEvent_dialog_name");
+
+    var events_from_qt = [];
+    // Convert VariantList to array. Why?
+    var full_events = [];
+    events_from_qt.forEach(function(obj){
+	full_events.push(obj);
+    });
+	    
+    var calendar = $('#calendar').fullCalendar({
+	header: {
+	    left: 'prev,next today',
+	    center: 'title',
+	    right: 'month,agendaWeek,agendaDay'
+	},
+	selectable: true,
+	selectHelper: true,
+	// allDayDefault: false, // default is true. It determines allDay.
+	select: function(start, end, allDay) {
+	    // var title = prompt('Event Title:');
+	    // if (title) {
+	    // 	calendar.fullCalendar('renderEvent',
+	    // 			      {
+	    // 				  title: title,
+	    // 				  start: start,
+	    // 				  end: end,
+	    // 				  allDay: allDay
+	    // 			      },
+	    // 			      true // make the event "stick"
+	    // 			     );
+	    // }
+	    // calendar.fullCalendar('unselect');
+
+jConfirm('Can you confirm this?', 'Confirmation Dialog', function(r) {
+    jAlert('Confirmed: ' + r, 'Confirmation Results');
+});
+// jConfirm('are you sure?', 'Confirmation Dialog',
+//     function(r) {
+//         result = r;
+//         response = true;
+//         return r;
+//     }
+// );
+
+
+	    centerPopup();
+	    loadPopup();
+	    timedCount();
+	    if (title) {
+		alert(title);
+	    	// calendar.fullCalendar('renderEvent',
+	    	// 		      {
+	    	// 			  title: title,
+	    	// 			  start: start,
+	    	// 			  end: end,
+	    	// 			  allDay: allDay
+	    	// 		      },
+	    	// 		      true // make the event "stick"
+	    	// 		     );
+	    }
+	    calendar.fullCalendar('unselect');
+
+
+
+	},
+	editable: true,
+
+	// We update all events at start.
+	events: full_events
+    });
+
+    $("#createEvent_dialog_summit").click(function() {
+	//m_title = $("#createEvent_dialog_name").val();
+	title = $("#createEvent_dialog_name").val();
+	disablePopup();
+	clearTimeout(t);
+    });
+
+    // Close popup
+    // with button
+    $("#createEvent_dialog_close").click(function(){
+	disablePopup();
+    });
+    // with background
+    $("#createEvent_dialog_background").click(function(){
+	disablePopup();
+    });
+    // with Escape
+    $(document).keypress(function(e){
+	if(e.keyCode==27 && popupStatus==1){
+	    disablePopup();
+	}
+    });
+    
+});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+  <div id="calendar"></div>
+  <div id="createEvent_dialog" title="Create new user">
+    This is createEvent dialog.
+    <a id="createEvent_dialog_close">x</a>
+    <form>
+      <fieldset>
+	<label for="name">Name</label>
+	<input type="text" name="name" id="createEvent_dialog_name" class="text ui-widget-content ui-corner-all" />
+	<label for="user">User</label>
+	<input type="text" name="user" id="createEvent_dialog_user" class="text ui-widget-content ui-corner-all" />
+	<input value="A submit button" type="submit" id="createEvent_dialog_summit">
+      </fieldset>
+    </form>
+  </div>
+
+  </div>
+  <div id="createEvent_dialog_background"></div>
+
+</body>
+</html>

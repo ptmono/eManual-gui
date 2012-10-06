@@ -1,0 +1,68 @@
+Purpose
+=======
+
+ - A tool that help my exercise
+
+**Scenario**
+
+I need some exercise. So I plan following exercises for a day during a
+month.
+ - running 360 minute
+ - 1000 count pushups
+
+I use my spare times. 10 minutes running, 30 count pushups, 40 count, 20
+minutes running ... My goal is to fill 360 minutes and 1000 counts pushups
+totally on a day.
+
+eManual helps scheduling and recording. Schedule and record the counts
+with eManual. After a month I can see my weakness.
+
+
+Requirements
+============
+
+ - scons
+ - qt4
+ - boost
+ - fullcalendar 1.5.3 (included)
+ - qdjango (included)
+ - qjson (included)
+
+
+Compiling
+=========
+
+In Fedora
+$ sudo yum install qt qt-devel boost boost-* scons
+$ cd PATH_THE_DIRECTORY
+$ sed 's/\#if 1/\#if 0/g' src/main.cpp		#test mode --> build mode
+$ scons
+$ build/Test					#execute
+
+
+Using
+=====
+
+1. You need "element". Push mouse right button to create "element", then
+click "Create Element". To schedule your exercise insert Name, Unit and
+Purpose. Shortcut and Note is optional. Shortcut is used when you simply
+add the record.
+
+You can create "group" with list of "element"s.
+
+2. Drag calendar with mouse left button. You can schedule "element" or
+"group" with the calendar.
+
+
+TODO
+====
+
+To archive this tool I have to do following
+ - View of current status
+ - Report results
+ - Simple user interface
+
+These days I don't interest this tool. It means that there is no
+additional codes. But I will coding if someone want to use this tool.
+
+

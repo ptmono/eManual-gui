@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='../fullcalendar/fullcalendar.print.css' media='print' />
+<link rel='stylesheet' type='text/css' href='popup.css' />
+<script type='text/javascript' src='../jquery/jquery-1.7.1.min.js'></script>
+<script type='text/javascript' src='../jquery/jquery-ui-1.8.17.custom.min.js'></script>
+<script type='text/javascript' src='../fullcalendar/fullcalendar.min.js'></script>
+<script type='text/javascript'>
+
+/////////
+/// popup
+
+// 0 means disabled; 1 means enabled;
+var popupStatus = 0;
+
+function loadPopup(){
+    if(popupStatus == 0){
+	$("#createEvent_dialog_background").css({
+	    "opacity": "0.7"
+	});
+	$("#createEvent_dialog_background").fadeIn("fast");
+	$("#createEvent_dialog").fadeIn("fast");
+	popupStatus = 1;
+    }
+}
+
+function disablePopup(){
+    if(popupStatus == 1){
+	$("#createEvent_dialog_background").fadeOut("slow");
+	$("#createEvent_dialog").fadeOut("slow");
+	popupStatus = 0;
+    }
+}
+
+function centerPopup(){
+    var windowWidth = document.documentElement.clientWidth;
+    var windowHeight = document.documentElement.clientHeight;
+    var popupHeight = $("#createEvent_dialog").height();
+    var popupWidth = $("#createEvent_dialog").width();
+    //centering
+    $("#createEvent_dialog").css({
+	"position": "absolute",
+	"top": windowHeight/2-popupHeight/2,
+	"left": windowWidth/2-popupWidth/2
+    });
+}
+
+//$(function(){
+    // $("#createEvent_dialog").dialog({
+    // 	autoOpen: false,
+    // 	height: 300,
+    // 	width:350,
+    // 	modal: true,
+    // 	buttons: {
+    // 	    "Create an account": function() {
+    // 		alert("fdskf");
+    // 	    },
+    // 	    Cancel: function() {
+    // 		$(this).dialog("close");
+    // 	    }
+    // 	},
+    // 	close: function() {
+    // 	}
+    // });
+//}
+
+
+var connected = false;
+
+function connectedSlots()
+{
+    if (!connected) {
+	connected = true;
+	emanualCmd.finishedUpdate.connect(this, update);
+    }
+}
+
+function update()
+{
+}
+
+var m_start;
+var m_end;
+var m_allDay;
+var m_title;
+
+function createEvent(obj, start, end, allDay)
+{
+
+    obj.fullCalendar('renderEvent',
+		     {
+			 title: "kfdslkfsdkf",
+			 start: start,
+			 end: end,
+			 allDay: allDay
+		     },
+		     true
+		    );
+    obj.fullCalendar('unselect');
+}
+
+
+$(document).ready(function() {
+
+    //createEvent();
+    // $(function() {
+    // 	$("#createEvent_dialog").dialog({
+    // 	    autoOpen: false,
+    // 	    height: 300,
+    // 	    width: 350,
+    // 	    modal: true
+    // 	});
+    // });
+
+    
+    // $(function() {
+    // 	$( "input:submit").button();
+    // });
+
+    var events_from_qt = emanualCmd.getEvents();
+    // Convert VariantList to array. Why?
+    var full_events = [];
+    events_from_qt.forEach(function(obj){
+	full_events.push(obj);
+    });
+	    
+    var calendar = $('#calendar').fullCalendar({
+	header: {
+	    left: 'prev,next today',
+	    center: 'title',
+	    right: 'month,agendaWeek,agendaDay'
+	},
+	selectable: true,
+	selectHelper: true,
+	// allDayDefault: false, // default is true. It determines allDay.
+	select: function(start, end, allDay) {
+
+	    emanualCmd.editSchedule("s", "s", "s");
+	    var tt = emanualCmd.getMtest();
+	    alert(tt);
+	    var title = prompt('Event Title:');
+	    if (title) {
+	    	// The time format of start is IETF. We want iso8601 format.
+	    	var start_iso = $.fullCalendar.formatDate(start, 'u');
+	    	if (!allDay)
+	    	    var end_iso = $.fullCalendar.formatDate(end, 'u');
+	    	else
+	    	    var end_iso = "";
+	    	emanualCmd.createSchedule(title, start_iso, end_iso);
+	    	calendar.fullCalendar('renderEvent',
+	    			      {
+	    				  title: title,
+	    				  start: start,
+	    				  end: end,
+	    				  allDay: allDay
+	    			      },
+	    			      true // make the event "stick"
+	    			     );
+	    }
+
+
+	    // m_start = start;
+	    // m_end = end;
+	    // m_allDay = allDay;
+
+	    // centerPopup();
+	    // loadPopup();
+	    // centerPopup();
+	    // loadPopup();
+
+	},
+	editable: true,
+
+
+	eventResize: function(event,dayDelta,minuteDelta,revertFunc) {
+
+            alert(
+		"The end date of " + event.title + "has been moved " +
+		    dayDelta + " days and " +
+		    minuteDelta + " minutes."
+            );
+	    
+            if (!confirm("is this okay?")) {
+		revertFunc();
+            }
+
+	},
+
+	eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {
+
+            alert(
+		event.title + " was moved " +
+		    dayDelta + " days and " +
+		    minuteDelta + " minutes."
+            );
+	    
+            if (allDay) {
+		alert("Event is now all-day");
+            }else{
+		alert("Event has a time-of-day");
+            }
+	    
+            if (!confirm("Are you sure about this change?")) {
+		revertFunc();
+            }
+	    
+	},
+	
+	// We update all events at start.
+	events: full_events
+    });
+
+    $("#createEvent_dialog_summit").click(function() {
+	//m_title = $("#createEvent_dialog_name").val();
+	createEvent(calendar, m_start, m_end, m_allDay);
+	//disablePopup();
+    });
+
+    // Close popup
+    // with button
+    $("#createEvent_dialog_close").click(function(){
+	disablePopup();
+    });
+    // with background
+    $("#createEvent_dialog_background").click(function(){
+	disablePopup();
+    });
+    // with Escape
+    $(document).keypress(function(e){
+	if(e.keyCode==27 && popupStatus==1){
+	    disablePopup();
+	}
+    });
+    
+});
+
+</script>
+<style type='text/css'>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+  <div id="calendar"></div>
+  <div id="createEvent_dialog" title="Create new user">
+    This is createEvent dialog.
+    <a id="createEvent_dialog_close">x</a>
+    <form>
+      <fieldset>
+	<label for="name">Name</label>
+	<input type="text" name="name" id="createEvent_dialog_name" class="text ui-widget-content ui-corner-all" />
+	<label for="user">User</label>
+	<input type="text" name="user" id="createEvent_dialog_user" class="text ui-widget-content ui-corner-all" />
+	<input value="A submit button" type="submit" id="createEvent_dialog_summit">
+      </fieldset>
+    </form>
+  </div>
+
+  </div>
+  <div id="createEvent_dialog_background"></div>
+
+</body>
+</html>
