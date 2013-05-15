@@ -7,6 +7,7 @@ Purpose
 
 I need some exercise. So I plan following exercises for a day during a
 month.
+
  - running 360 minute
  - 1000 count pushups
 
@@ -33,11 +34,13 @@ Compiling
 =========
 
 In Fedora
-$ sudo yum install qt qt-devel boost boost-* scons
-$ cd PATH_THE_DIRECTORY
-$ sed 's/\#if 1/\#if 0/g' src/main.cpp		#test mode --> build mode
-$ scons
-$ build/Test					#execute
+::
+
+ $ sudo yum install qt qt-devel boost boost-* scons
+ $ cd PATH_THE_DIRECTORY
+ $ sed 's/\#if 1/\#if 0/g' src/main.cpp		#test mode --> build mode
+ $ scons
+ $ build/Test					#execute
 
 
 Using
